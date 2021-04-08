@@ -4,7 +4,7 @@ public class LatticeCreation {
 
     
 
-    public static Set<Set<String>> generatePowerSet(Set<String> ints) {
+    public  Set<Set<String>> generatePowerSet(Set<String> ints) {
         // convert set to a list
         List<String> S = new ArrayList<>(ints);
 
