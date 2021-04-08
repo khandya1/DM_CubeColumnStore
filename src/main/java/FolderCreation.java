@@ -11,32 +11,24 @@ public class FolderCreation {
         File file = new File("src/main/resources/"+dbname);
         boolean bool = file.mkdir();
 
+        System.out.println("Enter number of dimensions");
+        int count_dimensional_table = sc.nextInt();
+        while(count_dimensional_table--)
+        {
+            System.out.println("Enter Dimensional table name");
+            String table = sc.next();
+            file = new File("src/main/resources/"+dbname+"/"+table);
+            bool = file.mkdir();
 
-        int count_dimensional_table = 1;
-        while(true){
-            System.out.println("Enter"+ count_dimensional_table +"Dimensional table path");
-            String path = sc.next();
-            String[] stringarray = path.split("/");
-            String s1 = stringarray[stringarray.length-1];
-            System.out.println(s1);
-            String s2 = s1.substring(0,s1.length()-4);
-            System.out.println(s2);
+            System.out.println("Enter number of attributes");
+            int attributes = sc.nextInt();
+            while(attributes--)
+            {
+                FileConversion fc = new FileConversion();
+                String attribute_name = sc.next();
+                fc.uploadfile(attribute_name);
 
-            File file1 = new File("src/main/resources/"+dbname+"/"+s2);
-            String s3 = "src/main/resources/"+dbname+"/"+s2;
-            System.out.println(s3);
-            bool = file1.mkdir();
-
-
-            if(bool){
-                System.out.println("Directory created successfully");
-            }else{
-                System.out.println("Sorry couldn’t create specified directory");
             }
-            String exit = sc.next();
-            if(exit.equals("yes")){
-                break;
-            }
-        }
+       }
     }
 }
