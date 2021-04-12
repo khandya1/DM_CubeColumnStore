@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<starSchema name="anshul">
+    <dimensionList>
+        <dimension name="anshul1">
+            <attributes code="1" name="id"/>
+            <attributes code="2" name="name"/>
+        </dimension>
+        <dimension name="anshul2">
+            <attributes code="3" name="idname"/>
+            <attributes code="4" name="nameid"/>
+        </dimension>
+    </dimensionList>
+    <factList>
+        <fact name="totalsale">
+            <aggregateFuncList>
+                <aggregateFuncs>SUM</aggregateFuncs>
+            </aggregateFuncList>
+            <type>NUMERIC</type>
+        </fact>
+    </factList>
+</starSchema>
