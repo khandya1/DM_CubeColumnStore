@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.*;
 
 public class LatticeCreation {
@@ -30,20 +31,20 @@ public class LatticeCreation {
 
         return result;
     }
-    public Set<String> generateLatticeName(Set<Set<String>> powerSet)
+    public void generateLatticeNameFolder(Set<Set<String>> powerSet)
     {
-        Set<String> atr_name = null;
+        Set<String> atr_name = new HashSet<>();
         Iterator<Set<String>> itr = powerSet.iterator();
         while(itr.hasNext())
         {
-            String atr="";
+            String atr="Lattice";
             for(String name : itr.next())
             {
-                atr=atr+name;
+                atr="_"+atr+name;
             }
             atr_name.add(atr);
+            File file = new File("src/main/resources/"+atr_name);
+            boolean bool = file.mkdir();
         }
-        return atr_name;
-
     }
 }
