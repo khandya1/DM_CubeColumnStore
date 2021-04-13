@@ -17,6 +17,7 @@ public class FolderCreation {
             Set<String> setOfDimensionName = new HashSet<>();
             System.out.println("Enter number of dimensions");
             FileConversion fileConversion = new FileConversion();
+            Map<String , Map<String,String>> dimensionAttributeMap= new HashMap<>();
             int count_dimensional_table = sc.nextInt();
             while (count_dimensional_table != 0) {
                 int i = 1;
@@ -47,6 +48,7 @@ public class FolderCreation {
                 count_dimensional_table--;
                 i++;
                 fileConversion.createFile(attributeMap, dimension, dbname);
+                dimensionAttributeMap.put(dimension , attributeMap);
             }
 
             System.out.println("Enter fact table details ");
@@ -78,6 +80,9 @@ public class FolderCreation {
             LatticeCreation latticeCreation = new LatticeCreation();
             Set<Set<String>> dimensionPower = latticeCreation.generatePowerSet(setOfDimensionName);
             latticeCreation.generateLatticeNameFolder(dimensionPower);
+            SchemaCreation schemaCreation = new SchemaCreation();
+            schemaCreation.instanceCreation(dimensionAttributeMap,"Fact",factAttributesXml);
+            schemaCreation.constraintsCreation(factVariables);
         }
         catch (Exception e)
         {
