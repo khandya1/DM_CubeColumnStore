@@ -8,12 +8,10 @@ import java.util.Iterator;
 public class FileConversion
 {
 
-    public void createFile(Map<String, String> attributeMap, String dimension, String dbname) throws IOException {
+    public void createFile(Map<String, String> attributeMap, String dimension, String dbname , String path) throws IOException {
         String csvSplitter = ",";
         int number_of_attributes=attributeMap.size();
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Enter the path for the file -->");
-        String path = sc.next();
+
         for(int i=0;i<number_of_attributes;i++)
         {
             BufferedReader br = new BufferedReader(new FileReader(path));
