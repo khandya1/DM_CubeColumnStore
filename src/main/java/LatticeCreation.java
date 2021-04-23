@@ -6,15 +6,11 @@ import java.util.*;
 
 public class LatticeCreation {
 
-    public Set<Set<String>> createLattice(String factPath, ArrayList<String> s, Map<String, String> factVariables, Integer columnNumber)
-    {
+    public Set<Set<String>> createLattice(String factPath, ArrayList<String> s, Map<String, String> factVariables, Integer columnNumber , String dbname) {
 
         long N = (long) Math.pow(2, s.size());
-
-        // Set to store subsets
         Set<Set<String>> result = new HashSet<>();
 
-        // generate each subset one by one
         for (int i = 0; i < N; i++) {
             Set<String> set = new HashSet<>();
 
@@ -35,7 +31,7 @@ public class LatticeCreation {
         System.out.println("Read Data Line by Line With Header \n");
         for (Map.Entry<String,String> entry : factVariables.entrySet())
         {
-            readDataLineByLine(factPath , result , columnNumber++ , entry.getValue());
+            readDataLineByLine(factPath , result , columnNumber++ , entry.getValue(), dbname);
         }
 
         System.out.println("_______________________________________________");
@@ -43,8 +39,7 @@ public class LatticeCreation {
 
     }
 
-    public static void readDataLineByLine(String file, Set<Set<String>> powerSet , Integer factColumnNumber , String aggFunc)
-    {
+    public static void readDataLineByLine(String file, Set<Set<String>> powerSet , Integer factColumnNumber , String aggFunc , String dbname) {
         try
         {
 
@@ -127,7 +122,7 @@ public class LatticeCreation {
 
                 }
                 System.out.println(column);
-                FolderCreateLattice(s);
+                FolderCreateLattice(s , dbname);
                 FileCreateHashMapToCsv(column,s, factheader);
             }
 
@@ -182,7 +177,7 @@ public class LatticeCreation {
         }
     }
 
-    private static void FolderCreateLattice(Set<String> s) {
+    private static void FolderCreateLattice(Set<String> s, String dbname) {
         String header ="";
         for(String h : s)
             header=header+h+",";
@@ -256,9 +251,10 @@ public class LatticeCreation {
                 pw.close();
                 br.close();
             }
-            Path fileToDeletePath = Paths.get(path);
-            Files.delete(fileToDeletePath);
+
         }
+        Path fileToDeletePath = Paths.get(path);
+        Files.delete(fileToDeletePath);
 
     }
 

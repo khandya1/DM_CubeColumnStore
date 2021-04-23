@@ -105,12 +105,12 @@ public class FolderCreation {
 
             LatticeCreation latticeCreation = new LatticeCreation();
             ArrayList<String> factIDColumns = latticeCreation.findFactIDColumns(factPath,setOfDimensionName.size());
-            Set<Set<String>> powerSet =  latticeCreation.createLattice(factPath,factIDColumns,factVariables, setOfDimensionName.size());
+            Set<Set<String>> powerSet =  latticeCreation.createLattice(factPath,factIDColumns,factVariables, setOfDimensionName.size(), dbname);
 
             /////olap queries
 
-            OLAP olap = new OLAP();
-            olap.applyOLAP(powerSet,dimensionAttributeMap , factVariables, factIDColumns);
+//            OLAP olap = new OLAP();
+//            olap.applyOLAP(powerSet,dimensionAttributeMap , factVariables, factIDColumns);
 
 
         }
