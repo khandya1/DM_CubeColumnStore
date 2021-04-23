@@ -37,7 +37,7 @@ public class LatticeFolderCreation {
         Iterator<Set<String>> itr = powerSet.iterator();
         while(itr.hasNext())
         {
-            String atr="Lattice";
+            String atr= "lattice";
             for(String name : itr.next())
             {
                 atr=""+atr+name;

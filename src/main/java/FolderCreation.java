@@ -82,27 +82,37 @@ public class FolderCreation {
                 noOfFactVariables--;
             }
             //finding all fact columns
+
             setOfDimensionName.forEach(v -> factColumns.put(v + "_ID", "NUMERIC"));//for each dimension name put dimension_id, integer
             factAttributesXml.forEach((k, v) -> factColumns.put(k, v));
             System.out.println("Enter the path for the fact file -->");
             String factPath = sc.next();
             fileConversion.createFile(factColumns, "Fact", dbname,factPath);
 
+
+            //Schema Creation
+
+            SchemaCreation schemaCreation = new SchemaCreation();
+            schemaCreation.instanceCreation(dimensionAttributeMap,"Fact",factAttributesXml);
+            schemaCreation.constraintsCreation(factVariables);
+
             ///folder creation for lattice
-            LatticeFolderCreation latticeFolderCreation = new LatticeFolderCreation();
-            Set<Set<String>> dimensionPower = latticeFolderCreation.generatePowerSet(setOfDimensionName);
-            latticeFolderCreation.generateLatticeNameFolder(dimensionPower , dbname);
+           // LatticeFolderCreation latticeFolderCreation = new LatticeFolderCreation();
+           // Set<Set<String>> dimensionPower = latticeFolderCreation.generatePowerSet(setOfDimensionName);
+           // latticeFolderCreation.generateLatticeNameFolder(dimensionPower , dbname);
 
             //lattice creation
 
             LatticeCreation latticeCreation = new LatticeCreation();
             ArrayList<String> factIDColumns = latticeCreation.findFactIDColumns(factPath,setOfDimensionName.size());
-            latticeCreation.createLattice(factPath,factIDColumns,factVariables, setOfDimensionName.size());
+            Set<Set<String>> powerSet =  latticeCreation.createLattice(factPath,factIDColumns,factVariables, setOfDimensionName.size());
+
+            /////olap queries
+
+            OLAP olap = new OLAP();
+            olap.applyOLAP(powerSet,dimensionAttributeMap , factVariables, factIDColumns);
 
 
-            SchemaCreation schemaCreation = new SchemaCreation();
-            schemaCreation.instanceCreation(dimensionAttributeMap,"Fact",factAttributesXml);
-            schemaCreation.constraintsCreation(factVariables);
         }
         catch (Exception e)
         {

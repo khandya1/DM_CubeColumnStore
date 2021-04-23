@@ -1,9 +1,12 @@
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class LatticeCreation {
 
-    public void createLattice(String factPath, ArrayList<String> s, Map<String, String> factVariables, Integer columnNumber)
+    public Set<Set<String>> createLattice(String factPath, ArrayList<String> s, Map<String, String> factVariables, Integer columnNumber)
     {
 
         long N = (long) Math.pow(2, s.size());
@@ -36,7 +39,7 @@ public class LatticeCreation {
         }
 
         System.out.println("_______________________________________________");
-
+        return result;
 
     }
 
@@ -47,15 +50,15 @@ public class LatticeCreation {
 
             ArrayList<Integer> index=new ArrayList<>();
             int choice = 5;
-            if(aggFunc == "SUM")
+            if(aggFunc.equalsIgnoreCase("SUM"))
                 choice = 0;
-            else if(aggFunc == "AVG")
+            else if(aggFunc.equalsIgnoreCase("AVG"))
                 choice = 1;
-            else if(aggFunc == "COUNT")
+            else if(aggFunc.equalsIgnoreCase("COUNT"))
                 choice = 2;
-            else if(aggFunc == "MAX")
+            else if(aggFunc.equalsIgnoreCase("MAX"))
                 choice = 3;
-            else if(aggFunc == "MIN")
+            else if(aggFunc.equalsIgnoreCase("MIN"))
                 choice = 4;
             else
             {
@@ -80,6 +83,7 @@ public class LatticeCreation {
                         index.add(i);
                     }
                 }
+                String factheader=header[factColumnNumber];
                 System.out.println(s);
                 HashMap<ArrayList<String>, Double> column = new HashMap();
                 while ((line = br.readLine()) != null)
@@ -123,25 +127,83 @@ public class LatticeCreation {
 
                 }
                 System.out.println(column);
-                FileCreateHashMapToCsv(column,s);
+                FolderCreateLattice(s);
+                FileCreateHashMapToCsv(column,s, factheader);
             }
+
+
+
+            ///////apex cuboid creation
+
+
+            File csvFile_apex = new File(file);
+            BufferedReader br_apex= new BufferedReader(new FileReader(csvFile_apex));
+            String line ="";
+            line = br_apex.readLine();
+            String[] header= line.split(",");
+            String factheader_apex=header[factColumnNumber];
+            PrintWriter pw_apex = new PrintWriter(new File("src/main/resources/lattice/lattice[]/"+"lattice[]_"+factheader_apex+".csv"));
+            StringBuffer csvData_apex = new StringBuffer("");
+            csvData_apex.append(factheader_apex);
+            csvData_apex.append("\n");
+            Double temp=0.0;
+            while ((line = br_apex.readLine()) != null) {
+                String[] arr = line.split(",");
+                Double fact_new_apex = Double.parseDouble(arr[factColumnNumber]);
+                switch(choice)
+                {
+                    case 0: temp=fact_new_apex+temp;
+                        break;
+                    case 1:temp=(fact_new_apex+temp)/2;
+                        break;
+                    case 2:temp=fact_new_apex+1;
+                        break;
+                    case 3:if(fact_new_apex>=temp)
+                        temp=fact_new_apex;
+                        break;
+                    case 4:if(fact_new_apex>=temp){}
+                    else
+                        temp=fact_new_apex;
+                        break;
+                    default: break;
+                }
+            }
+            csvData_apex.append(temp);
+            csvData_apex.append("\n");
+            pw_apex.write(csvData_apex.toString());
+            pw_apex.close();
+
+
+
+
         } catch (Exception e)
         {
             e.printStackTrace();
         }
     }
 
-    private static void FileCreateHashMapToCsv(HashMap<ArrayList<String>, Double> column, Set<String> s) {
+    private static void FolderCreateLattice(Set<String> s) {
+        String header ="";
+        for(String h : s)
+            header=header+h+",";
+        String m="lattice"+s;
+        File file = new File("src/main/resources/lattice/"+m);
+        boolean bool = file.mkdir();
+        File file1 = new File("src/main/resources/lattice/"+"lattice[]");
+        boolean bool1 = file1.mkdir();
 
+    }
+
+    private static void FileCreateHashMapToCsv(HashMap<ArrayList<String>, Double> column, Set<String> s,String factheader) {
         try {
             String header ="";
             for(String h : s)
                 header=header+h+",";
-
-            PrintWriter pw = new PrintWriter(new File("src/main/resources/"+s+".csv"));
+            PrintWriter pw = new PrintWriter(new File("src/main/resources/lattice/lattice"+s+"/"+"lattice"+s+"_"+factheader+".csv"));
             StringBuffer csvData = new StringBuffer("");
             csvData.append(header);
-            csvData.append("Fact\n");
+            csvData.append(factheader);
+            csvData.append("\n");
             for (Map.Entry<ArrayList<String>, Double> entry : column.entrySet())
             {
                 String x="";
@@ -153,10 +215,51 @@ public class LatticeCreation {
             }
             pw.write(csvData.toString());
             pw.close();
-
+            convertToColumnstore("src/main/resources/lattice/lattice"+s+"/"+"lattice"+s+"_"+factheader+".csv",s);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void convertToColumnstore(String path,Set<String> s) throws IOException {
+        File csvFile = new File(path);
+        BufferedReader br1 = new BufferedReader(new FileReader(csvFile));
+        String line1="";
+        line1=br1.readLine();
+        String csvSplitter = ",";
+        String[] header1=line1.split(csvSplitter);
+        int size=header1.length;
+        br1.close();
+        for(int i=0;i<size;i++)
+        {
+            BufferedReader br = new BufferedReader(new FileReader(path));
+            PrintWriter pw;
+            String line;
+            line=br.readLine();
+            String[] header=line.split(csvSplitter);
+            String  csv_name=header[i];
+            Path pathToCheck = Paths.get("src/main/resources/lattice/lattice"+s+"/"+csv_name+".csv");
+            boolean check= Files.exists(pathToCheck);
+            if(check)
+            {
+                continue;
+            }
+            else {
+                pw = new PrintWriter(new File("src/main/resources/lattice/lattice" + s + "/" + csv_name + ".csv"));
+                StringBuffer csvData = new StringBuffer("");
+                while ((line = br.readLine()) != null) {
+                    String[] cols = line.split(csvSplitter);
+                    csvData.append(cols[i]);
+                    csvData.append('\n');
+                }
+                pw.write(csvData.toString());
+                pw.close();
+                br.close();
+            }
+            Path fileToDeletePath = Paths.get(path);
+            Files.delete(fileToDeletePath);
+        }
+
     }
 
     public ArrayList<String> findFactIDColumns(String factPath, Integer noOfColumns) throws IOException {
