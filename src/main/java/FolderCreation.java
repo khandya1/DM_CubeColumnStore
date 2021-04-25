@@ -21,6 +21,7 @@ public class FolderCreation {
             int count_dimensional_table = sc.nextInt();
             int i = 1;
             FileConversion fileConversion = new FileConversion();
+            LinkedHashMap<String,String> dimensionID = new LinkedHashMap<>();
             while (count_dimensional_table != 0) {
 
                 System.out.println("Enter Dimensional table name" + i);
@@ -33,6 +34,8 @@ public class FolderCreation {
                 System.out.println("Enter number of attributes for dimension " + dimension);
                 int attributes = sc.nextInt();
                 Map<String, String> attributeMap = new HashMap<>();
+
+
                 int j = 1;
                 while (attributes != 0) {
 
@@ -43,6 +46,10 @@ public class FolderCreation {
                     attributeMap.put(attributeName, attributeType);
                     attributes--;
                     j++;
+                    String x ="ID";
+                    if (attributeName.matches(".*(" + x+ ")"))
+                    dimensionID.put(dimension,attributeName);
+
 
                 }
                 count_dimensional_table--;
@@ -107,10 +114,16 @@ public class FolderCreation {
             ArrayList<String> factIDColumns = latticeCreation.findFactIDColumns(factPath,setOfDimensionName.size());
             Set<Set<String>> powerSet =  latticeCreation.createLattice(factPath,factIDColumns,factVariables, setOfDimensionName.size(), dbname);
 
+
+            DeleteFile deleteFile = new DeleteFile();
+            deleteFile.testFile(dbname);
+
             /////olap queries
 
 //            OLAP olap = new OLAP();
 //            olap.applyOLAP(powerSet,dimensionAttributeMap , factVariables, factIDColumns);
+            RollUp rollUp = new RollUp();
+            rollUp.rollUpFunction(dimensionID, factVariables, powerSet, dbname);
 
 
         }

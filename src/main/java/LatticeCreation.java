@@ -123,7 +123,7 @@ public class LatticeCreation {
                 }
                 System.out.println(column);
                 FolderCreateLattice(s , dbname);
-                FileCreateHashMapToCsv(column,s, factheader);
+                FileCreateHashMapToCsv(column,s, factheader,dbname,aggFunc);
             }
 
 
@@ -137,7 +137,7 @@ public class LatticeCreation {
             line = br_apex.readLine();
             String[] header= line.split(",");
             String factheader_apex=header[factColumnNumber];
-            PrintWriter pw_apex = new PrintWriter(new File("src/main/resources/lattice/lattice[]/"+"lattice[]_"+factheader_apex+".csv"));
+            PrintWriter pw_apex = new PrintWriter(new File("src/main/resources/"+dbname+"/lattice/lattice[]/"+factheader_apex+"_"+aggFunc+".csv"));
             StringBuffer csvData_apex = new StringBuffer("");
             csvData_apex.append(factheader_apex);
             csvData_apex.append("\n");
@@ -182,22 +182,24 @@ public class LatticeCreation {
         for(String h : s)
             header=header+h+",";
         String m="lattice"+s;
-        File file = new File("src/main/resources/lattice/"+m);
+        File folder=new File("src/main/resources/"+dbname+"/lattice");
+        boolean ans=folder.mkdir();
+        File file = new File("src/main/resources/"+dbname+"/lattice/"+m);
         boolean bool = file.mkdir();
-        File file1 = new File("src/main/resources/lattice/"+"lattice[]");
+        File file1 = new File("src/main/resources/"+dbname+"/lattice/"+"lattice[]");
         boolean bool1 = file1.mkdir();
-
     }
 
-    private static void FileCreateHashMapToCsv(HashMap<ArrayList<String>, Double> column, Set<String> s,String factheader) {
+    private static void FileCreateHashMapToCsv(HashMap<ArrayList<String>, Double> column, Set<String> s, String factheader, String dbname, String aggFunc) {
         try {
             String header ="";
             for(String h : s)
                 header=header+h+",";
-            PrintWriter pw = new PrintWriter(new File("src/main/resources/lattice/lattice"+s+"/"+"lattice"+s+"_"+factheader+".csv"));
+            PrintWriter pw = new PrintWriter(new File("src/main/resources/"+dbname+"/lattice/lattice"+s+"/"+"lattice"+s+"_"+factheader+".csv"));
             StringBuffer csvData = new StringBuffer("");
             csvData.append(header);
-            csvData.append(factheader);
+            String headerForFactVariable=factheader+"_"+aggFunc;
+            csvData.append(headerForFactVariable);
             csvData.append("\n");
             for (Map.Entry<ArrayList<String>, Double> entry : column.entrySet())
             {
@@ -210,13 +212,13 @@ public class LatticeCreation {
             }
             pw.write(csvData.toString());
             pw.close();
-            convertToColumnstore("src/main/resources/lattice/lattice"+s+"/"+"lattice"+s+"_"+factheader+".csv",s);
+            convertToColumnstore("src/main/resources/"+dbname+"/lattice/lattice"+s+"/"+"lattice"+s+"_"+factheader+".csv",s,dbname);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void convertToColumnstore(String path,Set<String> s) throws IOException {
+    public static void convertToColumnstore(String path, Set<String> s, String dbname) throws IOException {
         File csvFile = new File(path);
         BufferedReader br1 = new BufferedReader(new FileReader(csvFile));
         String line1="";
@@ -233,14 +235,14 @@ public class LatticeCreation {
             line=br.readLine();
             String[] header=line.split(csvSplitter);
             String  csv_name=header[i];
-            Path pathToCheck = Paths.get("src/main/resources/lattice/lattice"+s+"/"+csv_name+".csv");
+            Path pathToCheck = Paths.get("src/main/resources/"+dbname+"/lattice/lattice"+s+"/"+csv_name+".csv");
             boolean check= Files.exists(pathToCheck);
             if(check)
             {
                 continue;
             }
             else {
-                pw = new PrintWriter(new File("src/main/resources/lattice/lattice" + s + "/" + csv_name + ".csv"));
+                pw = new PrintWriter(new File("src/main/resources/"+dbname+"/lattice/lattice" + s + "/" + csv_name + ".csv"));
                 StringBuffer csvData = new StringBuffer("");
                 while ((line = br.readLine()) != null) {
                     String[] cols = line.split(csvSplitter);
@@ -253,8 +255,6 @@ public class LatticeCreation {
             }
 
         }
-        Path fileToDeletePath = Paths.get(path);
-        Files.delete(fileToDeletePath);
 
     }
 
