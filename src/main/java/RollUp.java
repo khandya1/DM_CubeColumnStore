@@ -126,6 +126,7 @@ import java.util.*;
                 String[] arr = line.split(",");
                 columnValue.add(arr[0]);
             }
+            br.close();
             return columnValue;
         }
         private static List<String> readFile(Path pathToCheck) throws IOException {

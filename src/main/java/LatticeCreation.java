@@ -121,6 +121,7 @@ public class LatticeCreation {
                         column.put(columnValue,fact_new);
 
                 }
+                br.close();
                 System.out.println(column);
                 FolderCreateLattice(s , dbname);
                 FileCreateHashMapToCsv(column,s, factheader,dbname,aggFunc);
@@ -167,6 +168,7 @@ public class LatticeCreation {
             csvData_apex.append("\n");
             pw_apex.write(csvData_apex.toString());
             pw_apex.close();
+            br_apex.close();
 
 
 
@@ -253,7 +255,7 @@ public class LatticeCreation {
                 pw.close();
                 br.close();
             }
-
+            br.close();
         }
 
     }
@@ -270,6 +272,7 @@ public class LatticeCreation {
         {
            factColumns.add(header[i]);
         }
+        br.close();
         return factColumns;
 
 
