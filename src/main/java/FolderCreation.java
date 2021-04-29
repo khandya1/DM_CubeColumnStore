@@ -1,5 +1,7 @@
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.*;
 
 public class FolderCreation {
@@ -10,6 +12,8 @@ public class FolderCreation {
 
             System.out.println("Enter the database name");
             String dbname = sc.next();///////Database name
+
+
 
             File file = new File("src/main/resources/" + dbname);
             boolean bool = file.mkdir();//creating database folder
@@ -122,6 +126,7 @@ public class FolderCreation {
 
 //            OLAP olap = new OLAP();
 //            olap.applyOLAP(powerSet,dimensionAttributeMap , factVariables, factIDColumns);
+
             RollUp rollUp = new RollUp();
             rollUp.rollUpFunction(dimensionID, factVariables, powerSet, dbname);
 
