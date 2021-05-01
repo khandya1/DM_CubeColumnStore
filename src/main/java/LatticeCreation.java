@@ -24,9 +24,6 @@ public class LatticeCreation {
             if(!set.isEmpty())
                 result.add(set);
         }
-        System.out.println(result);
-        for(Set<String> stt : result)
-            System.out.println(stt);
 
         System.out.println("Read Data Line by Line With Header \n");
         for (Map.Entry<String,String> entry : factVariables.entrySet())
@@ -180,9 +177,7 @@ public class LatticeCreation {
     }
 
     private static void FolderCreateLattice(Set<String> s, String dbname) {
-        String header ="";
-        for(String h : s)
-            header=header+h+",";
+
         String m="lattice"+s;
         File folder=new File("src/main/resources/"+dbname+"/lattice");
         boolean ans=folder.mkdir();

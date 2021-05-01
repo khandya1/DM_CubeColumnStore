@@ -1,4 +1,5 @@
 import dnl.utils.text.table.TextTable;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -44,7 +45,6 @@ public class Dice {
 
         List<String> attrName = new ArrayList<>();
         for (int i = 0; i < totalDim; i++) {
-            System.out.println("Enter " + i + 1 + " dimension name");
             dimparname[i] = sc.next();
 
             System.out.println("These are the Attribute's for Dimension " + dimparname[i]);
@@ -97,8 +97,6 @@ public class Dice {
             System.out.println("Enter the condition on which you want to filter slice based of above data");
         } else
             System.out.println("Enter the condition on which you want to filter slice");
-
-
         System.out.println("--> If values are in STRING format than use only == as a condition otherwise for Integer values >=, >, <=, <, =, !=");
 
 
@@ -163,12 +161,14 @@ public class Dice {
 
         int k = 0;
 
+
         List<Integer> finalconditionindex = new ArrayList<>();
         int t1 = 0;
         for(Map.Entry<String, List<Integer>> s: conditionindex.entrySet()){
             List<Integer> conditionindexcopy = new ArrayList<>();
             if(s.getKey().equals(dimensionID.get(dimparname[k]))){
 
+                System.out.println("*"+finalconditionindex);
 //                    List<Integer> conditionindexcopy = new ArrayList<>();
                 if(t1==0){
                     finalconditionindex = conditionindex.get(s.getKey());
@@ -180,21 +180,16 @@ public class Dice {
                     int outline = 0;
                     int r1 = 0;
                     int n2 = s.getValue().size();
-                    System.out.println("n2 is :- "+n2);
+                    int n3 = finalconditionindex.size();
                     System.out.println(s.getValue());
                     int r2 = 0;
                     while ((line1 = br4.readLine())!=null){
-                        System.out.println("line1 :- "+line1);
-                        if(r1<n2 && finalconditionindex.get(r1)==linenumber1 ){
+                        if(r1<n2 && r1<n3 && finalconditionindex.get(r1)==linenumber1 ){
                             if(s.getValue().contains(finalconditionindex.get(r1))){
-                                System.out.println("linenumber1 in if:- "+linenumber1);
                                 System.out.println(s.getValue().contains(finalconditionindex.get(r1)));
                                 conditionindexcopy.add(linenumber1);
                             }
                             r1++;
-                        }else{
-                            System.out.println("linenumber1 :- "+linenumber1);
-                            System.out.println(s.getValue().contains(finalconditionindex.get(r1)));
                         }
                         linenumber1++;
                     }
@@ -203,6 +198,7 @@ public class Dice {
                 }
                 System.out.println(finalconditionindex);
             }else{
+                System.out.println("***"+finalconditionindex);
                 if(t1==0)
                 {
                     String dname = "";
@@ -220,8 +216,6 @@ public class Dice {
                         }
                     }
 
-                    System.out.println(dname);
-                    System.out.println(dnamepriKey);
 
                     File selectedFile4 = new File("src/main/resources/"+dbname+"/Fact/" + dnamepriKey + ".csv");
                     BufferedReader br4 = new BufferedReader(new FileReader(selectedFile4));
@@ -230,8 +224,6 @@ public class Dice {
                     int outline = 0;
                     int r1 = 0;
                     int n2 = s.getValue().size();
-                    System.out.println("n2 is :- "+n2);
-                    System.out.println(s.getValue());
                     int r2 = 0;
 
                     while ((line1=br4.readLine())!=null){
@@ -261,8 +253,6 @@ public class Dice {
                         }
                     }
 
-                    System.out.println(dname);
-                    System.out.println(dnamepriKey);
 
                     File selectedFile4 = new File("src/main/resources/"+dbname+"/Fact/" + dnamepriKey + ".csv");
                     BufferedReader br4 = new BufferedReader(new FileReader(selectedFile4));
@@ -271,15 +261,12 @@ public class Dice {
                     int outline = 0;
                     int r1 = 0;
                     int n2 = s.getValue().size();
-                    System.out.println("n2 is :- "+n2);
-                    System.out.println(s.getValue());
                     int r2 = 0;
 
                     while ((line1=br4.readLine())!=null){
                         if(s.getValue().contains(Integer.parseInt(line1)-1)){
                             if(finalconditionindex.contains(linenumber1)){
                                 conditionindexcopy.add(linenumber1);
-                                System.out.println(linenumber1);
                             }
                         }
                         linenumber1++;
@@ -290,9 +277,10 @@ public class Dice {
             }
             k++;
             t1++;
-            System.out.println(finalconditionindex);
         }
 
+
+        System.out.println(finalconditionindex);
 
         System.out.println("***************************************");
 
@@ -302,9 +290,7 @@ public class Dice {
 
         t1 = 0;
 
-        System.out.println(factfilename);
         for(String file: factfilename){
-            System.out.println("Filename is :---------- "+file);
 
             String dimfinal = "";
             for(Map.Entry<String, String> s: dimensionID.entrySet()){
@@ -326,12 +312,9 @@ public class Dice {
                 int r1 = 0;
                 List<String> record = new ArrayList<>();
                 record = records.get(attDim.get(dimfinal));
-                System.out.println("**************");
-                System.out.println(record);
-                System.out.println("**************");
 
                 while ((line = br.readLine()) != null) {
-                    if ((finalconditionindex.get(r1) == linenumber) && r1 < n2) {
+                    if (r1 < n2 && (finalconditionindex.get(r1) == linenumber)) {
                         System.out.println("line :- "+line);
                         if (t1 == 0) columnvalues1.add(outline, Collections.singletonList(record.get(Integer.parseInt(line)-1)));
                         else {
@@ -353,7 +336,7 @@ public class Dice {
                 int n2 = finalconditionindex.size();
                 int r1 = 0;
                 while ((line = br.readLine()) != null) {
-                    if ((finalconditionindex.get(r1) == linenumber) && r1 < n2) {
+                    if (r1 < n2 && (finalconditionindex.get(r1) == linenumber)) {
                         System.out.println("line :- "+line);
                         if (t1 == 0) columnvalues1.add(outline, Collections.singletonList(line));
                         else {
@@ -371,7 +354,6 @@ public class Dice {
         }
 
 
-        System.out.println(columnvalues1);
         int i = 0;
         for(Map.Entry<String , String> s: attDim.entrySet()){
 
@@ -400,46 +382,7 @@ public class Dice {
             }
             a++;
         }
-
         TextTable tt = new TextTable(Arrays.copyOf(factfilename.toArray(),factfilename.toArray().length, String[].class), outputresult);
-
-
         tt.printTable();
-
     }
 }
-
-/*
-  File selectedFile4 = new File("src/main/resources/"+dbname+"/Fact/" + s + ".csv");
-                BufferedReader br4 = new BufferedReader(new FileReader(selectedFile4));
-
-                String line1 = "";
-                int linenumber1 = 0;
-                int outline = 0;
-                int r1 = 0;
-                int n2 = conditionindex.size();
-                List<Integer> conditionindexcopy = new ArrayList<>();
-                while ((line1 = br4.readLine()) != null) {
-//                    System.out.println(line1);
-                    if (t11 == 0){
-                        Slice.findindex(limitdouble1, limitString1, operand1, conditionindexcopy, line1, outline);
-                    }
-                    else {
-                        if((conditionindex.get(r1) == linenumber1) && r1<n2){
-                            Slice.findindex(limitdouble1, limitString1, operand1, conditionindexcopy, line1, linenumber1);
-                            if(r1 == n2-1)
-                                break;
-                            r1++;
-                        }
-                    }
-                    outline++;
-                    linenumber1++;
-                }
-                t11 = 1;
-                conditionindex.clear();
-                conditionindex = conditionindexcopy;
-//                System.out.println(conditionindex);
-                outline = 0;
-            }
-            Slice.output(filename,dbname, conditionindex);
- */

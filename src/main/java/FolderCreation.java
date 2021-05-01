@@ -1,22 +1,58 @@
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class FolderCreation {
 
-    public static void main(String[] args) throws IOException {
+    public static void foldercreation() throws IOException {
         Scanner sc = new Scanner(System.in);
         try {
 
             System.out.println("Enter the database name");
             String dbname = sc.next();///////Database name
 
+            while(true){
+                File dbFile = new File("src/main/resources/dbname.txt");
+                BufferedReader br = new BufferedReader(new FileReader(dbFile));
+                String line = "";
+                boolean fileExist = false;
+                while((line = br.readLine())!=null){
+                    if(line.equals(dbname)){
+                        fileExist = true;
+                    }
+                }
+                if(fileExist){
+                    System.out.println("Please Enter different DB Name as this name already exist...");
+                    dbname = sc.next();
+                }else{
+                    File file1 = new File("src/main/resources/"+dbname);
+                    boolean bool = file1.mkdir();//creating database folder
+
+                    PrintWriter out = null;
+                    BufferedWriter bw = null;
+                    FileWriter fw = null;
+
+                    fw = new FileWriter("src/main/resources/dbname.txt", true);
+                    bw = new BufferedWriter(fw);
+                    out = new PrintWriter(bw);
+                    out.println(dbname+"\n");
+                    out.close();
+                    bw.close();
+                    fw.close();
+
+                    break;
+                }
+            }
 
 
-            File file = new File("src/main/resources/" + dbname);
-            boolean bool = file.mkdir();//creating database folder
+
+
+            File savedData = new File("src/main/resources/"+dbname+"/savedData");
+            boolean bool = savedData.mkdir();
+
 
 
             Map<String , Map<String,String>> dimensionAttributeMap= new HashMap<>();//dimensionName and Attribute and type
@@ -32,9 +68,8 @@ public class FolderCreation {
                 String dimension = sc.next();
                 setOfDimensionName.add(dimension);
                 String path = "src/main/resources/" + dbname + "/" + dimension;
-                file = new File(path);//creating folder for dimension
+                File file = new File(path);//creating folder for dimension
                 bool = file.mkdir();
-
                 System.out.println("Enter number of attributes for dimension " + dimension);
                 int attributes = sc.nextInt();
                 Map<String, String> attributeMap = new HashMap<>();
@@ -51,8 +86,8 @@ public class FolderCreation {
                     attributes--;
                     j++;
                     String x ="ID";
-                    if (attributeName.matches(".*(" + x+ ")"))
-                    dimensionID.put(dimension,attributeName);
+                    if (attributeName.matches("(.*)" + x))
+                        dimensionID.put(dimension,attributeName);
 
 
                 }
@@ -66,7 +101,15 @@ public class FolderCreation {
                 dimensionAttributeMap.put(dimension , attributeMap);
             }
 
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+            FileOutputStream saveDimension = new FileOutputStream(new File("src/main/resources/"+dbname+"/savedData/dimension"));
+            ObjectOutputStream objectOutputStream= new ObjectOutputStream(saveDimension);
+            objectOutputStream.writeObject(dimensionID);
+
+            FileOutputStream saveDimensionAttributeMap = new FileOutputStream(new File("src/main/resources/"+dbname+"/savedData/dimensionAttributeMap"));
+            ObjectOutputStream objectOutputStream1 = new ObjectOutputStream(saveDimensionAttributeMap);
+            objectOutputStream1.writeObject(dimensionAttributeMap);
 
 
 
@@ -74,7 +117,7 @@ public class FolderCreation {
             Map<String, String> factColumns = new HashMap<>();//all the columns of fact table
             Map<String, String> factAttributesXml = new HashMap<>();//fact variables and the type
             String path = "src/main/resources/" + dbname + "/Fact";
-            file = new File(path);
+            File file = new File(path);
             bool = file.mkdir();//fact folder created
             System.out.println("Enter fact table details ");
             System.out.println("Enter the number of Fact variables");
@@ -101,16 +144,15 @@ public class FolderCreation {
             fileConversion.createFile(factColumns, "Fact", dbname,factPath);
 
 
+            FileOutputStream savefactvaribale = new FileOutputStream(new File("src/main/resources/"+dbname+"/savedData/factvaribale"));
+            ObjectOutputStream savefactvaribaleO= new ObjectOutputStream(savefactvaribale);
+            savefactvaribaleO.writeObject(factVariables);
+
             //Schema Creation
 
             SchemaCreation schemaCreation = new SchemaCreation();
-            schemaCreation.instanceCreation(dimensionAttributeMap,"Fact",factAttributesXml);
-            schemaCreation.constraintsCreation(factVariables);
-
-            ///folder creation for lattice
-           // LatticeFolderCreation latticeFolderCreation = new LatticeFolderCreation();
-           // Set<Set<String>> dimensionPower = latticeFolderCreation.generatePowerSet(setOfDimensionName);
-           // latticeFolderCreation.generateLatticeNameFolder(dimensionPower , dbname);
+            schemaCreation.instanceCreation(dimensionAttributeMap,"Fact",factAttributesXml , dbname);
+            schemaCreation.constraintsCreation(factVariables , dbname);
 
             //lattice creation
 
@@ -118,18 +160,12 @@ public class FolderCreation {
             ArrayList<String> factIDColumns = latticeCreation.findFactIDColumns(factPath,setOfDimensionName.size());
             Set<Set<String>> powerSet =  latticeCreation.createLattice(factPath,factIDColumns,factVariables, setOfDimensionName.size(), dbname);
 
+            FileOutputStream saveLattice = new FileOutputStream(new File("src/main/resources/"+dbname+"/savedData/lattice"));
+            ObjectOutputStream objectOutputStream2= new ObjectOutputStream(saveLattice);
+            objectOutputStream2.writeObject(powerSet);
 
             DeleteFile deleteFile = new DeleteFile();
             deleteFile.testFile(dbname);
-
-            /////olap queries
-
-//            OLAP olap = new OLAP();
-//            olap.applyOLAP(powerSet,dimensionAttributeMap , factVariables, factIDColumns);
-
-            RollUp rollUp = new RollUp();
-            rollUp.rollUpFunction(dimensionID, factVariables, powerSet, dbname);
-
 
         }
         catch (Exception e)

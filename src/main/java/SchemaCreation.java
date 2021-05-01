@@ -5,13 +5,13 @@ import java.util.Map;
 
 public class SchemaCreation {
 
-    public void instanceCreation(Map<String, Map<String,String>> input, String fact_table, Map<String,String> fact_variable) throws FileNotFoundException, FileNotFoundException {
+    public void instanceCreation(Map<String, Map<String, String>> input, String fact_table, Map<String, String> fact_variable, String dbname) throws FileNotFoundException, FileNotFoundException {
         //input named map is one where first String represents the dimension and the associated map i.e. the second input represents the map where
         //first input is the attribute name and second is the data type of attribute
         //fact_table is the name of the fact table
         //fact_variable is that map where first string is the name of the fact variable i.e. sales and second is its data type
         int number_of_dimensions=input.size();
-        PrintWriter pw= new PrintWriter(new File("src/main/resources/schema/star_schema.xml"));
+        PrintWriter pw= new PrintWriter(new File("src/main/resources/schema/"+dbname+"_schema.xml"));
         StringBuffer xmlData = new StringBuffer("");
         xmlData.append("<?xml version=\"1.0\"?>");
         xmlData.append("\n");
@@ -87,10 +87,10 @@ public class SchemaCreation {
 
 
 
-    public void constraintsCreation(Map<String,String> fact_variable) throws FileNotFoundException {
+    public void constraintsCreation(Map<String, String> fact_variable, String dbname) throws FileNotFoundException {
         //this fact_variable i am taking is that map where the first string is the fact variable name like sales
         // and second is the aggregate function like sum
-        PrintWriter pw= new PrintWriter(new File("src/main/resources/schema/constraints.xml"));
+        PrintWriter pw= new PrintWriter(new File("src/main/resources/schema/"+dbname+"_constraints.xml"));
         StringBuffer xmlData = new StringBuffer("");
         xmlData.append("<?xml version=\"1.0\"?>");
         xmlData.append("\n");

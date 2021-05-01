@@ -1,4 +1,7 @@
+
+
 import dnl.utils.text.table.TextTable;
+
 import java.io.*;
 import java.util.*;
 
@@ -8,12 +11,12 @@ public class Slice {
 
     public static void getSlice(Map<String, Map<String, String>> dimensionAttributeMap, Map<String, String> dimensionID, Map<String, String> factV, Set<Set<String>> powerSet, String dbname) throws IOException {
 
-
-        System.out.println(dimensionAttributeMap);
-        System.out.println(dimensionID);
-        System.out.println(factV);
-        System.out.println(powerSet);
-        System.out.println(dbname);
+//
+//        System.out.println(dimensionAttributeMap);
+//            System.out.println(dimensionID);
+//            System.out.println(factV);
+//            System.out.println(powerSet);
+//            System.out.println(dbname);
 
         File directorypath = new File("src/main/resources/"+dbname+"/Fact");
 
@@ -31,11 +34,6 @@ public class Slice {
             factfilename.add(s.getKey());
         }
 
-
-        System.out.println(factfilename);
-//
-//        assert filelist != null;
-//        makefilename(filelist, Dimfilename, factvaribalename, filename);
 
         System.out.println("These are the available dimension for DB "+dbname+"");
         List<String> headerList = new ArrayList<>();
@@ -60,9 +58,7 @@ public class Slice {
 
         System.out.println("Want to see complete data yes/no");
 
-        System.out.println("/////////////////");
         String yesno = sc.next();
-        System.out.println("/////////////////");
 
 
         if (yesno.equals("yes")) {
@@ -181,10 +177,8 @@ public class Slice {
 
 //        System.out.println("*******************************");
         for (String file : factfilename) {
-            System.out.println("Filename is :------------" + file);
 
             if(file.equals(primaryIDofDim)){
-                System.out.println(primaryIDofDim);
                 File selectedFile = new File("src/main/resources/"+dbname+"/Fact/" + file + ".csv");
                 BufferedReader br = new BufferedReader(new FileReader(selectedFile));
 
@@ -202,7 +196,6 @@ public class Slice {
 //                    System.out.println("line " + line);
 //                    System.out.println(columnvalues1.size());
 
-                        System.out.println("line :- "+line);
                         if (t1 == 0) {
                             columnvalues1.add(outline, Collections.singletonList(records.get(Integer.parseInt(line)-1)));
                         }
@@ -227,7 +220,6 @@ public class Slice {
                 }
             }
             else{
-                System.out.println(primaryIDofDim);
                 File selectedFile = new File("src/main/resources/"+dbname+"/Fact/" + file + ".csv");
                 BufferedReader br = new BufferedReader(new FileReader(selectedFile));
 
